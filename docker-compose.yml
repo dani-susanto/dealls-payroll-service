@@ -1,0 +1,60 @@
+services:
+  app:
+    image: dealls-payroll-app
+    container_name: dealls-payroll-app
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/app
+      - ./node_modules:/app/node_modules
+    depends_on:
+      - db
+
+  db:
+    image: postgres:17-alpine
+    container_name: dealls-payroll-db
+    environment:
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - db-volume:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+  adminer:
+    image: adminer
+    container_name: dealls-payroll-adminer
+    ports:
+      - 3001:8080
+    depends_on:
+      - db
+
+  redis:
+    image: redis:7-alpine
+    container_name: dealls-payroll-redis
+    command: redis-server --appendonly yes
+    ports:
+      - 6379:6379
+    volumes:
+      - redis-volume:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: dealls-payroll-redis-commander
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "3002:8081"
+    depends_on:
+      - redis
+
+volumes:
+  db-volume:
+  redis-volume:
