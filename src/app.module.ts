@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppDataSource } from './database/data-source';
 import { AdminAuthModule } from './admin-auth/admin-auth.module';
@@ -10,6 +10,9 @@ import { AdminPayrollModule } from './admin-payroll/admin-payroll.module';
 import { EmployeeActivityModule } from './employee-activity/employee-activity.module';
 import { EmployeePayrollModule } from './employee-payroll/employee-payroll.module';
 import { BullModule } from '@nestjs/bullmq';
+import { RequestLoggerInterceptor } from './common/interceptors/request-logger.interceptor';
+import { RequestLog } from './entities/request-log.entity';
+import { ProcessRequestLoggerJob } from './common/jobs/process-request-logger.job';
 
 @Module({
   imports: [
@@ -28,6 +31,10 @@ import { BullModule } from '@nestjs/bullmq';
     AdminPayrollModule,
     EmployeeActivityModule,
     EmployeePayrollModule,
+    BullModule.registerQueue({
+      name: 'process-request-logger',
+    }),
+    TypeOrmModule.forFeature([RequestLog]),
   ],
   controllers: [],
   providers: [
@@ -39,6 +46,11 @@ import { BullModule } from '@nestjs/bullmq';
       provide: APP_INTERCEPTOR,
       useClass: ClassSerializerInterceptor,
     },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: RequestLoggerInterceptor,
+    },
+    ProcessRequestLoggerJob,
   ],
 })
 export class AppModule {}
