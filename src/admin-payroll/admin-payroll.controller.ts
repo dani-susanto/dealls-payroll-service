@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards, SerializeOptions, Param, Query, Get } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards, Request, SerializeOptions, Param, Query, Get } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { AdminPayrollService } from './admin-payroll.service';
 import { CreatePayrollPeriodRequestDto } from './dtos/create-payroll-period-request.dto';
@@ -39,8 +39,8 @@ export class AdminPayrollController {
   @ApiResponse({ status: 400, description: 'Invalid period or already processed' })
   @Post('periods/:id/execute')
   @SerializeOptions({ type: ExecutePayrollPeriodResponseDto })
-  executePayroll(@Param('id') id: string): Promise<ExecutePayrollPeriodResponseDto> {
-    return this.adminPayrollService.executePayroll(id);
+  executePayroll(@Param('id') id: string, @Request() req): Promise<ExecutePayrollPeriodResponseDto> {
+    return this.adminPayrollService.executePayroll(id, req.user.sub);
   }
 
   @ApiOperation({ summary: 'Get payroll period summaries' })

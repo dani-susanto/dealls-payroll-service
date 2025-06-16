@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { Entity, Column, OneToMany } from 'typeorm';
+import { BaseEntity } from './base.entity';
 import { EmployeeAttendance } from './employee-attendance.entity';
 import { EmployeeOvertime } from './employee-overtime.entity';
 import { EmployeeReimbursement } from './employee-reimbursement.entity';
@@ -10,10 +11,7 @@ export enum EmployeeStatus {
 }
 
 @Entity('employees')
-export class Employee {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class Employee extends BaseEntity {
   @Column({ 
     type: 'varchar', 
     length: 200 
@@ -47,12 +45,6 @@ export class Employee {
     default: EmployeeStatus.ACTIVE
   })
   status: EmployeeStatus;
-
-  @CreateDateColumn()
-  created_at: Date;
-
-  @UpdateDateColumn()
-  updated_at: Date;
 
   @OneToMany(() => EmployeeAttendance, attendance => attendance.employee)
   attendances: EmployeeAttendance[];

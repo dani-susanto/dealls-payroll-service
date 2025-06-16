@@ -1,10 +1,8 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, Column } from 'typeorm';
+import { BaseEntity } from './base.entity';
 
 @Entity('admins')
-export class Admin {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class Admin extends BaseEntity {
   @Column({ 
     type: 'varchar', 
     length: 200 
@@ -23,10 +21,4 @@ export class Admin {
     length: 255 
   })
   password: string;
-
-  @CreateDateColumn()
-  created_at: Date;
-
-  @UpdateDateColumn()
-  updated_at: Date;
 }

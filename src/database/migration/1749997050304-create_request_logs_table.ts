@@ -67,6 +67,16 @@ export class CreateRequestLogsTable1749997050304 implements MigrationInterface {
                     isNullable: true
                 },
                 {
+                    name: "created_by",
+                    type: "uuid",
+                    isNullable: true
+                },
+                {
+                    name: "updated_by",
+                    type: "uuid",
+                    isNullable: true
+                },
+                {
                     name: "created_at",
                     type: "timestamp",
                     default: "CURRENT_TIMESTAMP"

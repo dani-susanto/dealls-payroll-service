@@ -31,6 +31,16 @@ export class CreateAdminTables1749709036083 implements MigrationInterface {
                         length: "255",
                     },
                     {
+                        name: "created_by",
+                        type: "uuid",
+                        isNullable: true
+                    },
+                    {
+                        name: "updated_by",
+                        type: "uuid",
+                        isNullable: true
+                    },
+                    {
                         name: "created_at",
                         type: "timestamp",
                         default: "CURRENT_TIMESTAMP",

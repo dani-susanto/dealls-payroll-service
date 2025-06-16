@@ -57,7 +57,7 @@ describe('AdminAuthController', () => {
         created_at: new Date(),
         updated_at: new Date()
       };
-      jest.spyOn(service, 'getProfile').mockResolvedValue(result);
+      jest.spyOn(service, 'getProfile').mockResolvedValue(result as any);
 
       expect(await controller.me({ user: { sub: '5f238a66-5474-439d-8071-30d6d61251e6' } }))
         .toEqual(result);

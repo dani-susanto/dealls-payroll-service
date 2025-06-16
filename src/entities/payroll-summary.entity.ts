@@ -1,13 +1,11 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import { BaseEntity } from './base.entity';
 import { Employee } from './employee.entity';
 import { PayrollPeriod } from './payroll-period.entity';
 import { PayrollSummaryComponent } from './payroll-summary-component.entity';
 
 @Entity('payroll_summaries')
-export class PayrollSummary {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class PayrollSummary extends BaseEntity {
   @Column({ type: 'uuid' })
   payroll_period_id: string;
 
@@ -21,12 +19,6 @@ export class PayrollSummary {
     default: 0
   })
   take_home_pay_amount: number;
-
-  @CreateDateColumn()
-  created_at: Date;
-
-  @UpdateDateColumn()
-  updated_at: Date;
 
   @ManyToOne(() => PayrollPeriod)
   @JoinColumn({ name: 'payroll_period_id' })

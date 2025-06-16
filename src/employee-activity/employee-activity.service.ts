@@ -31,10 +31,12 @@ export class EmployeeActivityService {
 
     if (existingAttendance) return existingAttendance;
 
-    return await this.employeeAttendanceRepository.save({
+    const attendance = this.employeeAttendanceRepository.create({
       employee_id: employeeId,
       attendance_date: today
     });
+
+    return await this.employeeAttendanceRepository.save(attendance);
   }
 
   async submitOvertime(employeeId: string, extraHour: number): Promise<EmployeeOvertime> {
@@ -53,11 +55,13 @@ export class EmployeeActivityService {
 
     if (existingOvertime) throw new BadRequestException('Overtime already submitted for today');
 
-    return await this.employeeOvertimeRepository.save({
+    const overtime = this.employeeOvertimeRepository.create({
       employee_id: employeeId,
       overtime_date: now,
       extra_hour: extraHour
     });
+
+    return await this.employeeOvertimeRepository.save(overtime);
   }
 
   async submitReimbursement(
@@ -65,11 +69,13 @@ export class EmployeeActivityService {
     amount: number,
     description: string
   ): Promise<EmployeeReimbursement> {
-    return await this.employeeReimbursementRepository.save({
+    const reimbursement = this.employeeReimbursementRepository.create({
       employee_id: employeeId,
       reimbursement_date: new Date(),
       amount,
       description
     });
+
+    return await this.employeeReimbursementRepository.save(reimbursement);
   }
 }

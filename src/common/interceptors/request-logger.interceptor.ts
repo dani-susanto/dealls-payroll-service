@@ -4,12 +4,14 @@ import { Queue } from 'bullmq';
 import { Observable } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { v4 as uuidv4 } from 'uuid';
+import { ClsService } from 'nestjs-cls';
 
 @Injectable()
 export class RequestLoggerInterceptor implements NestInterceptor {
   constructor(
     @InjectQueue('process-request-logger')
     private requestLoggerQueue: Queue,
+    private readonly cls: ClsService
   ) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
@@ -28,6 +30,8 @@ export class RequestLoggerInterceptor implements NestInterceptor {
       request_body: JSON.stringify(request.body),
       user_id: request.user?.sub
     };
+    
+    this.cls.set('userId', request.user?.sub);
 
     return next.handle().pipe(
       tap(async (responseBody) => {

@@ -129,16 +129,19 @@ describe('EmployeeActivityService', () => {
 
   describe('submitReimbursement', () => {
     it('should submit reimbursement successfully', async () => {
+      mockRepository.create.mockReturnValue(mockReimbursement);
       mockRepository.save.mockResolvedValue(mockReimbursement);
 
       const result = await service.submitReimbursement('6f96a537-e6b5-40fb-b9b5-1b98ae184dfb', 50000, 'Taxi fare');
-      expect(result).toEqual(mockReimbursement);
-      expect(mockRepository.save).toHaveBeenCalledWith({
+      
+      expect(mockRepository.create).toHaveBeenCalledWith({
         employee_id: '6f96a537-e6b5-40fb-b9b5-1b98ae184dfb',
         amount: 50000,
         description: 'Taxi fare',
         reimbursement_date: expect.any(Date)
       });
+      expect(mockRepository.save).toHaveBeenCalledWith(mockReimbursement);
+      expect(result).toEqual(mockReimbursement);
     });
   });
 });

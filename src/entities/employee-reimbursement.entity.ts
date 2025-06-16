@@ -1,11 +1,9 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { BaseEntity } from './base.entity';
 import { Employee } from './employee.entity';
 
 @Entity('employee_reimbursements')
-export class EmployeeReimbursement {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class EmployeeReimbursement extends BaseEntity {
   @Column({ type: 'uuid' })
   employee_id: string;
 
@@ -22,12 +20,6 @@ export class EmployeeReimbursement {
 
   @Column({ type: 'text', nullable: true })
   description: string;
-
-  @CreateDateColumn()
-  created_at: Date;
-
-  @UpdateDateColumn()
-  updated_at: Date;
 
   @ManyToOne(() => Employee)
   @JoinColumn({ name: 'employee_id' })

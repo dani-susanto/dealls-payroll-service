@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
+import { BaseEntity } from './base.entity';
 import { PayrollSummary } from './payroll-summary.entity';
 
 export enum PayrollPeriodStatus {
@@ -8,10 +9,7 @@ export enum PayrollPeriodStatus {
 }
 
 @Entity('payroll_periods')
-export class PayrollPeriod {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class PayrollPeriod extends BaseEntity {
   @Column({ type: 'date' })
   start_date: Date;
 
@@ -23,12 +21,6 @@ export class PayrollPeriod {
     enum: PayrollPeriodStatus,
   })
   status: PayrollPeriodStatus;
-
-  @CreateDateColumn()
-  created_at: Date;
-
-  @UpdateDateColumn()
-  updated_at: Date;
 
   @OneToMany(() => PayrollSummary, summary => summary.payroll_period)
   payroll_summaries: PayrollSummary[];

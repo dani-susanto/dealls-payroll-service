@@ -17,6 +17,10 @@ describe('AdminPayrollService', () => {
   let payrollInitQueue: Queue;
   let payrollPeriodRepository: any;
 
+  const mockAdmin = {
+    id: '5f238a66-5474-439d-8071-30d6d61251e6'
+  }
+  
   const mockPeriod = {
     id: '4232cafd-9a13-4fc3-aea5-37b332d5a8cf',
     start_date: new Date('2025-05-21'),
@@ -128,7 +132,7 @@ describe('AdminPayrollService', () => {
         status: PayrollPeriodStatus.PROCESSING
       });
 
-      const result = await service.executePayroll(mockPeriod.id);
+      const result = await service.executePayroll(mockPeriod.id, mockAdmin.id);
 
       expect(result).toEqual({
         id: mockPeriod.id,
@@ -136,14 +140,14 @@ describe('AdminPayrollService', () => {
       });
       expect(payrollInitQueue.add).toHaveBeenCalledWith(
         'init-process-employee-payroll',
-        { periodId: mockPeriod.id }
+        { periodId: mockPeriod.id, adminId: mockAdmin.id }
       );
     });
 
     it('should throw NotFoundException when period not found', async () => {
       payrollPeriodRepository.findOneBy.mockResolvedValue(null);
 
-      await expect(service.executePayroll('non-existent'))
+      await expect(service.executePayroll('non-existent', mockAdmin.id))
         .rejects
         .toThrow(NotFoundException);
     });
@@ -154,7 +158,7 @@ describe('AdminPayrollService', () => {
         status: PayrollPeriodStatus.COMPLETED
       });
 
-      await expect(service.executePayroll(mockPeriod.id))
+      await expect(service.executePayroll(mockPeriod.id, mockAdmin.id))
         .rejects
         .toThrow(BadRequestException);
     });

@@ -47,6 +47,16 @@ export class CreateEmployeesTable1749708264326 implements MigrationInterface {
                         default: "'ACTIVE'",
                     },
                     {
+                        name: "created_by",
+                        type: "uuid",
+                        isNullable: true
+                    },
+                    {
+                        name: "updated_by",
+                        type: "uuid",
+                        isNullable: true
+                    },
+                    {
                         name: "created_at",
                         type: "timestamp",
                         default: "CURRENT_TIMESTAMP",

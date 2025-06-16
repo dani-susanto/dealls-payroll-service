@@ -1,10 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Column, Entity } from 'typeorm';
+import { BaseEntity } from './base.entity';
 
 @Entity('request_logs')
-export class RequestLog {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class RequestLog extends BaseEntity {
   @Column({ type: 'uuid', unique: true, nullable: true })
   request_id: string;
 
@@ -34,10 +32,4 @@ export class RequestLog {
 
   @Column({ type: 'text', nullable: true })
   error_message: string;
-
-  @CreateDateColumn()
-  created_at: Date;
-
-  @UpdateDateColumn()
-  updated_at: Date;
 }

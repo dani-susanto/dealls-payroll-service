@@ -13,6 +13,7 @@ import { BullModule } from '@nestjs/bullmq';
 import { RequestLoggerInterceptor } from './common/interceptors/request-logger.interceptor';
 import { RequestLog } from './entities/request-log.entity';
 import { ProcessRequestLoggerJob } from './common/jobs/process-request-logger.job';
+import { ClsModule } from 'nestjs-cls';
 
 @Module({
   imports: [
@@ -26,15 +27,24 @@ import { ProcessRequestLoggerJob } from './common/jobs/process-request-logger.jo
         port: parseInt(process.env.REDIS_PORT || '6379', 10),
       },
     }),
+    BullModule.registerQueue({
+      name: 'process-request-logger',
+    }),
+    TypeOrmModule.forFeature([RequestLog]),
+    ClsModule.forRoot({
+      global: true,
+      middleware: {
+        mount: true
+      },
+      interceptor: {
+        mount: true
+      },
+    }),
     AdminAuthModule,
     EmployeeAuthModule,
     AdminPayrollModule,
     EmployeeActivityModule,
     EmployeePayrollModule,
-    BullModule.registerQueue({
-      name: 'process-request-logger',
-    }),
-    TypeOrmModule.forFeature([RequestLog]),
   ],
   controllers: [],
   providers: [

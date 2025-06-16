@@ -13,7 +13,7 @@ import { JwtAdminAuthStrategy } from '../common/strategies/jwt-admin.strategy';
       global: true,
       secret: process.env.JWT_ADMIN_SECRET || 'super-secret',
       signOptions: { 
-        expiresIn: process.env.JWT_ADMIN_EXPIRES_IN || '15m' 
+        expiresIn: process.env.JWT_ADMIN_EXPIRED_IN || '15m' 
       },
     }),
   ],

@@ -1,12 +1,10 @@
-import { Check, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Check, Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { BaseEntity } from './base.entity';
 import { Employee } from './employee.entity';
 
 @Check(`"extra_hour" > 0 AND "extra_hour" <= 3`)
 @Entity('employee_overtimes')
-export class EmployeeOvertime {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class EmployeeOvertime extends BaseEntity {
   @Column({ type: 'uuid' })
   employee_id: string;
 
@@ -15,12 +13,6 @@ export class EmployeeOvertime {
 
   @Column({ type: 'integer' })
   extra_hour: number;
-
-  @CreateDateColumn()
-  created_at: Date;
-
-  @UpdateDateColumn()
-  updated_at: Date;
 
   @ManyToOne(() => Employee)
   @JoinColumn({ name: 'employee_id' })

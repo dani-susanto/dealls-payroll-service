@@ -65,10 +65,10 @@ export class AdminPayrollService {
     return this.payrollPeriodRepository.save(payrollPeriod);
   }
 
-  async executePayroll(periodId: string): Promise<ExecutePayrollPeriodResponseDto> {
+  async executePayroll(periodId: string, adminId: string): Promise<ExecutePayrollPeriodResponseDto> {
     await this.validateAndUpdatePeriod(periodId);
-    
-    await this.payrollInitQueue.add('init-process-employee-payroll', { periodId });
+
+    await this.payrollInitQueue.add('init-process-employee-payroll', { periodId, adminId });
 
     return {
       id: periodId,
@@ -178,29 +178,33 @@ export class AdminPayrollService {
     totalAmount: number,
     amounts: { attendanceAmount: number; overtimeAmount: number; reimbursementAmount: number }
   ) {
-    const summary = await manager.save(PayrollSummary, {
+    const summary = manager.create(PayrollSummary, {
       payroll_period_id: periodId,
       employee_id: employeeId,
       take_home_pay_amount: totalAmount
     });
 
-    await manager.save(PayrollSummaryComponent, [
-      {
-        payroll_summary_id: summary.id,
+    const savedSummary = await manager.save(summary);
+
+    const components = [
+      manager.create(PayrollSummaryComponent, {
+        payroll_summary_id: savedSummary.id,
         payment_type: PayrollSummaryComponentPaymentType.SALARY,
         amount: amounts.attendanceAmount
-      },
-      {
-        payroll_summary_id: summary.id,
+      }),
+      manager.create(PayrollSummaryComponent, {
+        payroll_summary_id: savedSummary.id,
         payment_type: PayrollSummaryComponentPaymentType.OVERTIME,
         amount: amounts.overtimeAmount
-      },
-      {
-        payroll_summary_id: summary.id,
+      }),
+      manager.create(PayrollSummaryComponent, {
+        payroll_summary_id: savedSummary.id,
         payment_type: PayrollSummaryComponentPaymentType.REIMBURSEMENT,
         amount: amounts.reimbursementAmount
-      }
-    ]);
+      })
+    ];
+
+    await manager.save(components);
   }
 
   private async updatePeriodCounts(period: PayrollPeriod, eligibleCount: number, processedCount: number, failedCount: number, manager: EntityManager) {

@@ -7,6 +7,7 @@ import { AdminPayrollService } from '../admin-payroll.service';
 
 interface InitPayrollPayload {
   periodId: string;
+  adminId: string;
 }
 
 @Processor('init-process-employee-payroll')
@@ -22,7 +23,7 @@ export class InitProcessEmployeePayrollJob extends WorkerHost {
   }
 
   async process(job: Job<InitPayrollPayload>): Promise<void> {
-    const { periodId } = job.data;
+    const { periodId, adminId } = job.data;
     const period = await this.payrollPeriodRepository.findOneBy({ id: periodId });
     
     if (!period) return;
@@ -38,7 +39,8 @@ export class InitProcessEmployeePayrollJob extends WorkerHost {
         this.employeePayrollQueue.add('process-employee-payroll', {
           periodId,
           employeeId: employee.id,
-          workingDays
+          workingDays,
+          adminId
         }, {
           removeOnComplete: true,
           attempts: 3
