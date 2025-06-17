@@ -28,12 +28,33 @@ describe('AdminPayrollService', () => {
     status: PayrollPeriodStatus.DRAFT
   };
 
+  const mockPeriods = [
+    {
+      id: '123e4567-e89b-12d3-a456-426614174000',
+      start_date: new Date('2024-01-01'),
+      end_date: new Date('2024-01-31'),
+      status: PayrollPeriodStatus.DRAFT,
+      eligible_employee_count: 0,
+      processed_employee_count: 0,
+      failed_employee_count: 0,
+      created_at: new Date(),
+      updated_at: new Date()
+    }
+  ];
+
   beforeEach(async () => {
     payrollPeriodRepository = {
       findOne: jest.fn(),
       findOneBy: jest.fn(),
       create: jest.fn(),
       save: jest.fn(),
+      createQueryBuilder: jest.fn(() => ({
+        orderBy: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        take: jest.fn().mockReturnThis(),
+        getManyAndCount: jest.fn().mockResolvedValue([mockPeriods, 1])
+      }))
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -161,6 +182,43 @@ describe('AdminPayrollService', () => {
       await expect(service.executePayroll(mockPeriod.id, mockAdmin.id))
         .rejects
         .toThrow(BadRequestException);
+    });
+  });
+
+  describe('listPeriods', () => {
+    it('should return list of periods with pagination', async () => {
+      const result = await service.listPeriods({ page: 1, limit: 10 });
+
+      expect(result).toEqual({
+        data: mockPeriods,
+        meta: {
+          total: 1,
+          page: 1,
+          limit: 10,
+          last_page: 1
+        }
+      });
+      
+      expect(payrollPeriodRepository.createQueryBuilder).toHaveBeenCalled();
+    });
+
+    it('should filter by status when provided', async () => {
+      const queryBuilder = {
+        orderBy: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        take: jest.fn().mockReturnThis(),
+        getManyAndCount: jest.fn().mockResolvedValue([mockPeriods, 1])
+      };
+
+      payrollPeriodRepository.createQueryBuilder.mockReturnValue(queryBuilder);
+
+      await service.listPeriods({ page: 1, limit: 10 }, PayrollPeriodStatus.DRAFT);
+
+      expect(queryBuilder.where).toHaveBeenCalledWith(
+        'period.status = :status',
+        { status: PayrollPeriodStatus.DRAFT }
+      );
     });
   });
 });

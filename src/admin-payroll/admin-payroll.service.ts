@@ -14,6 +14,7 @@ import { PaginationQueryDto } from '../common/dtos/pagination-query.dto';
 import { PayrollPeriodSummaryResponseDto } from './dtos/payroll-period-summary-response.dto';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
+import { ListPayrollPeriodsResponseDto } from './dtos/list-payroll-periods-response.dto';
 
 @Injectable()
 export class AdminPayrollService {
@@ -256,6 +257,35 @@ export class AdminPayrollService {
         name: summary.employee.name,
         take_home_pay_amount: Number(summary.take_home_pay_amount || 0)
       })),
+      meta: {
+        total,
+        page,
+        limit,
+        last_page: Math.ceil(total / limit)
+      }
+    };
+  }
+
+  async listPeriods(query: PaginationQueryDto, status?: PayrollPeriodStatus): Promise<ListPayrollPeriodsResponseDto> {
+    const page = Number(query.page || 1);
+    const limit = Number(query.limit || 10);
+    const skip = (page - 1) * limit;
+
+    const queryBuilder = this.payrollPeriodRepository
+      .createQueryBuilder('period')
+      .orderBy('period.created_at', 'DESC');
+
+    if (status) {
+      queryBuilder.where('period.status = :status', { status });
+    }
+
+    const [periods, total] = await queryBuilder
+      .skip(skip)
+      .take(limit)
+      .getManyAndCount();
+
+    return {
+      data: periods,
       meta: {
         total,
         page,

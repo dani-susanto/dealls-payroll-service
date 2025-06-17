@@ -10,6 +10,7 @@ describe('AdminPayrollController', () => {
 
   const mockPayrollService = {
     createPayrollPeriod: jest.fn(),
+    listPeriods: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -78,6 +79,67 @@ describe('AdminPayrollController', () => {
       await expect(controller.createPayrollPeriod(createDto))
         .rejects
         .toThrow(BadRequestException);
+    });
+  });
+
+  describe('listPeriods', () => {
+    it('should return list of periods', async () => {
+      const mockResponse = {
+        data: [{
+          id: '123e4567-e89b-12d3-a456-426614174000',
+          start_date: new Date('2024-01-01'),
+          end_date: new Date('2024-01-31'),
+          status: PayrollPeriodStatus.DRAFT,
+          eligible_employee_count: 0,
+          processed_employee_count: 0,
+          failed_employee_count: 0
+        }],
+        meta: {
+          total: 1,
+          page: 1,
+          limit: 10,
+          last_page: 1
+        }
+      };
+
+      jest.spyOn(service, 'listPeriods').mockResolvedValue(mockResponse);
+
+      const result = await controller.listPeriods({ page: 1, limit: 10 });
+      expect(result).toEqual(mockResponse);
+      expect(service.listPeriods).toHaveBeenCalledWith({ page: 1, limit: 10 }, undefined);
+    });
+
+    it('should filter by status when provided', async () => {
+      const mockResponse = {
+        data: [{
+          id: '123e4567-e89b-12d3-a456-426614174000',
+          start_date: new Date('2024-01-01'),
+          end_date: new Date('2024-01-31'),
+          status: PayrollPeriodStatus.DRAFT,
+          eligible_employee_count: 0,
+          processed_employee_count: 0,
+          failed_employee_count: 0
+        }],
+        meta: {
+          total: 1,
+          page: 1,
+          limit: 10,
+          last_page: 1
+        }
+      };
+
+      jest.spyOn(service, 'listPeriods').mockResolvedValue(mockResponse);
+
+      const result = await controller.listPeriods(
+        { page: 1, limit: 10 }, 
+        PayrollPeriodStatus.DRAFT
+      );
+
+      expect(result).toEqual(mockResponse);
+      expect(service.listPeriods).toHaveBeenCalledWith(
+        { page: 1, limit: 10 },
+        PayrollPeriodStatus.DRAFT
+      );
     });
   });
 });

@@ -7,6 +7,8 @@ import { CreatePayrollPeriodResponseDto } from './dtos/create-payroll-period-res
 import { ExecutePayrollPeriodResponseDto } from './dtos/execute-payroll-period-response.dto';
 import { PaginationQueryDto } from '../common/dtos/pagination-query.dto';
 import { PayrollPeriodSummaryResponseDto } from './dtos/payroll-period-summary-response.dto';
+import { ListPayrollPeriodsResponseDto } from './dtos/list-payroll-periods-response.dto';
+import { PayrollPeriodStatus } from '../entities/payroll-period.entity';
 
 @ApiTags('Admin Payroll')
 @Controller({
@@ -56,5 +58,20 @@ export class AdminPayrollController {
     @Query() query: PaginationQueryDto
   ): Promise<PayrollPeriodSummaryResponseDto> {
     return this.adminPayrollService.getPeriodSummaries(id, query);
+  }
+
+  @ApiOperation({ summary: 'List payroll periods' })
+  @ApiResponse({ 
+    status: 200,
+    description: 'Payroll periods retrieved successfully',
+    type: ListPayrollPeriodsResponseDto 
+  })
+  @Get('periods')
+  @SerializeOptions({ type: ListPayrollPeriodsResponseDto })
+  listPeriods(
+    @Query() query: PaginationQueryDto,
+    @Query('status') status?: PayrollPeriodStatus
+  ): Promise<ListPayrollPeriodsResponseDto> {
+    return this.adminPayrollService.listPeriods(query, status);
   }
 }
