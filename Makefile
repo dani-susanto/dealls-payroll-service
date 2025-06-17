@@ -12,31 +12,31 @@ migration:
 		exit 1; \
 	fi
 	@echo "📦 Creating migration: $(name)..."
-	@docker exec -it $(APP_CONTAINER) npm run migration:create --name=$(name) 2>/dev/null || true
+	@docker exec -it $(APP_CONTAINER) npm run migration:create --name=$(name)
 	@echo "✅ Migration created: $(name)"
 
 migrate:
 	@echo "🚀 Running migrations..."
-	@docker exec -it $(APP_CONTAINER) npm run migration:run 2>/dev/null || true
+	@docker exec -it $(APP_CONTAINER) npm run migration:run
 	@echo "✅ Migrations applied successfully."
 
 migrate-reset:
 	@echo "🧨 Resetting all migrations..."
-	@docker exec -it $(APP_CONTAINER) npm run migration:reset 2>/dev/null || true
+	@docker exec -it $(APP_CONTAINER) npm run migration:reset
 	@echo "✅ Reset completed."
 
 migrate-revert:
 	@echo "↩️  Rolling back last migration..."
-	@docker exec -it $(APP_CONTAINER) npm run migration:revert 2>/dev/null || true
+	@docker exec -it $(APP_CONTAINER) npm run migration:revert
 	@echo "✅ Rollback completed."
 
 migrate-status:
 	@echo "📊 Current migration status:"
-	@docker exec -it $(APP_CONTAINER) npm run migration:show 2>/dev/null || true
+	@docker exec -it $(APP_CONTAINER) npm run migration:show
 
 seed:
 	@echo "🌱 Running seeders..."
-	@docker exec -it $(APP_CONTAINER) npm run seed:run 2>/dev/null || true
+	@docker exec -it $(APP_CONTAINER) npm run seed:run
 	@echo "✅ Seeding complete."
 
 start:
@@ -51,25 +51,25 @@ stop:
 
 restart-app:
 	@echo "🔄 Restarting the application..."
-	@docker compose restart $(APP_CONTAINER) 2>/dev/null || true
+	@docker compose restart $(APP_CONTAINER)
 	@docker logs -f $(APP_CONTAINER)
 	@echo "✅ Application restarted."
 
 reset: migrate-reset stop
 	@echo "🧹 Removing all containers..."
-	@docker rm $(APP_CONTAINER) $(DB_CONTAINER) adminer 2>/dev/null || true
+	@docker rm $(APP_CONTAINER) $(DB_CONTAINER) adminer
 	@echo "✅ Containers cleaned up"
 
 test:
 	@echo "🧪 Running tests..."
-	@docker exec -it $(APP_CONTAINER) npm run test 2>/dev/null || true
+	@docker exec -it $(APP_CONTAINER) npm run test
 	@echo "✅ Tests completed."
 
 test-watch:
 	@echo "👀 Running tests in watch mode..."
-	@docker exec -it $(APP_CONTAINER) npm run test:watch 2>/dev/null || true
+	@docker exec -it $(APP_CONTAINER) npm run test:watch
 
 test-cov:
 	@echo "📊 Running tests with coverage..."
-	@docker exec -it $(APP_CONTAINER) npm run test:cov 2>/dev/null || true
+	@docker exec -it $(APP_CONTAINER) npm run test:cov
 	@echo "✅ Coverage report generated."

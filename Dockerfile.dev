@@ -6,7 +6,8 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install --no-audit --no-fund --prefer-offline
+RUN npm install --no-audit --no-fund --prefer-offline && \
+    npm install -g @nestjs/cli
 
 COPY . .
 
