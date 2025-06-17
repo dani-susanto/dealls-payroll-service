@@ -24,7 +24,17 @@ async function bootstrap() {
         name: 'Authorization',
         in: 'header',
       },
-      'access-token',
+      'admin-access-token',
+    )
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'Authorization',
+        in: 'header',
+      },
+      'employee-access-token',
     )
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);

@@ -13,7 +13,7 @@ import { PayrollPeriodSummaryResponseDto } from './dtos/payroll-period-summary-r
   path: 'admin/payroll',
   version: '1'
 })
-@ApiBearerAuth('access-token')
+@ApiBearerAuth('admin-access-token')
 @UseGuards(JwtAdminAuthGuard)
 export class AdminPayrollController {
   constructor(private adminPayrollService: AdminPayrollService) {}

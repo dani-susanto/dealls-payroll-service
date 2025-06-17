@@ -40,7 +40,7 @@ export class AdminAuthController {
     status: 401, 
     description: 'Unauthorized' 
   })
-  @ApiBearerAuth('access-token')
+  @ApiBearerAuth('admin-access-token')
   @UseGuards(JwtAdminAuthGuard)
   @SerializeOptions({ type: AdminProfileResponseDto })
   @Get('me')

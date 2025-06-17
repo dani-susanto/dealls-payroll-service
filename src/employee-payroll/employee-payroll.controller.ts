@@ -9,7 +9,7 @@ import { JwtEmployeeActiveAuthGuard } from '../common/guards/jwt-employee-active
   path: 'employee/payroll',
   version: '1'
 })
-@ApiBearerAuth('access-token')
+@ApiBearerAuth('employee-access-token')
 @UseGuards(JwtEmployeeActiveAuthGuard)
 @SerializeOptions({type: PayslipResponseDto})
 export class EmployeePayrollController {

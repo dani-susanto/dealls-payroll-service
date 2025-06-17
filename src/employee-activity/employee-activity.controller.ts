@@ -13,7 +13,7 @@ import { JwtEmployeeActiveAuthGuard } from '../common/guards/jwt-employee-active
   path: 'employee/activity',
   version: '1'
 })
-@ApiBearerAuth('access-token')
+@ApiBearerAuth('employee-access-token')
 @UseGuards(JwtEmployeeActiveAuthGuard)
 export class EmployeeActivityController {
   constructor(private employeeActivityService: EmployeeActivityService) {}

@@ -40,7 +40,7 @@ export class EmployeeAuthController {
     status: 401, 
     description: 'Unauthorized' 
   })
-  @ApiBearerAuth('access-token')
+  @ApiBearerAuth('employee-access-token')
   @UseGuards(JwtEmployeeAuthGuard)
   @Get('me')
   me(@Request() req): Promise<EmployeeProfileResponseDto> {
